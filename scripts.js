@@ -160,6 +160,8 @@ const handleBookFilterSearch = (event) => {
 	handleToggleDialog("search");
 };
 
+// handleLoadNextPage
+
 /**
  * Loads additional books onto the next page, updates the {@link current.page}
  * number, and displays the count of remaining books that the user can load. If
