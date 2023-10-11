@@ -109,9 +109,9 @@ const handleOpenBookPreviewDialog = (event) => {
  * This event handler takes a user's book search inputs (`title`, `authors`,
  * and/or `genres`) when the {@link book.search.form} is submitted. It iterates
  * over the {@link books} book library and assigns the result of all books that
- * match the supplied search inputs to the {@link current.booksSource} as the new reference
- * book library, but filtered. The {@link current.page} is reset to `1`, the
- * {@link book.list.items} book preview catalog is cleared, and the
+ * match the supplied search inputs to the {@link current.booksSource} as the
+ * new reference book library, but filtered. The {@link current.page} is reset
+ * to `1`, the {@link book.list.items} book preview catalog is cleared, and the
  * {@link createBookPreviewsHTML} function is called to create the first
  * filtered book previews fragment, which is then appended to the HTML DOM.
  * Additional filtered book previews fragments will be created and appended to
@@ -161,9 +161,9 @@ const handleBookFilterSearch = (event) => {
 };
 
 /**
- * Loads additional books onto the next page, updates the {@link current.page} number, and
- * displays the count of remaining books that the user can load. If no books are
- * left to load, it will disable the {@link book.list.button}.
+ * Loads additional books onto the next page, updates the {@link current.page}
+ * number, and displays the count of remaining books that the user can load. If
+ * no books are left to load, it will disable the {@link book.list.button}.
  *
  */
 const handleLoadNextPage = () => {
