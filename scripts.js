@@ -1,12 +1,29 @@
+/* eslint-disable import/extensions */
 import { authors, books } from "./modules/data.js";
 
-import {
-	createBookPreviewsHTML,
-	updateRemainingBooks,
-	loadFirstPage,
-	current,
-	book,
-} from "./modules/dom-manipulation.js";
+import book from "./modules/dom-manipulation.js";
+
+import { booksPreviewObj } from "./modules/books-preview.js";
+
+// toggleDialogHandler
+
+/**
+ * Toggles the dialog for either {@link book.search.dialog},
+ * {@link book.list.dialog}, or {@link book.settings.dialog} based on the
+ * provided {@link feature}. The function automatically opens the dialog modal
+ * if it's closed, or closes it if it's open, for the associated `feature`
+ * (search, list, or settings dialog) when invoked.
+ *
+ * @param {"search" | "list" | "settings"} feature - The app features that
+ * support the dialog modal.
+ */
+const handleToggleDialog = (feature) => {
+	if (book[feature].dialog.open) {
+		book[feature].dialog.close();
+	} else {
+		book[feature].dialog.showModal();
+	}
+};
 
 // toggleThemeHandler
 
@@ -40,26 +57,6 @@ const toggleThemeHandler = (event) => {
 	handleToggleDialog("settings");
 };
 
-// toggleDialogHandler
-
-/**
- * Toggles the dialog for either {@link book.search.dialog},
- * {@link book.list.dialog}, or {@link book.settings.dialog} based on the
- * provided {@link feature}. The function automatically opens the dialog modal
- * if it's closed, or closes it if it's open, for the associated `feature`
- * (search, list, or settings dialog) when invoked.
- *
- * @param {"search" | "list" | "settings"} feature - The app features that
- * support the dialog modal.
- */
-const handleToggleDialog = (feature) => {
-	if (book[feature].dialog.open) {
-		book[feature].dialog.close();
-	} else {
-		book[feature].dialog.showModal();
-	}
-};
-
 // handleOpenBookPreviewDialog
 
 /**
@@ -76,12 +73,14 @@ const handleOpenBookPreviewDialog = (event) => {
 	const pathArray = Array.from(event.path || event.composedPath());
 	let active = null;
 
+	// eslint-disable-next-line no-restricted-syntax
 	for (const node of pathArray) {
 		if (active) break;
 
 		if (node?.dataset?.preview) {
 			let result = null;
 
+			// eslint-disable-next-line no-restricted-syntax
 			for (const singleBook of books) {
 				if (result) break;
 				if (singleBook.id === node?.dataset?.preview) result = singleBook;
@@ -126,9 +125,11 @@ const handleBookFilterSearch = (event) => {
 	const filters = Object.fromEntries(formData);
 	const result = [];
 
+	// eslint-disable-next-line no-restricted-syntax, no-shadow
 	for (const book of books) {
 		let genreMatch = filters.genre === "any";
 
+		// eslint-disable-next-line no-restricted-syntax
 		for (const singleGenre of book.genres) {
 			if (genreMatch) break;
 			if (singleGenre === filters.genre) genreMatch = true;
@@ -144,39 +145,17 @@ const handleBookFilterSearch = (event) => {
 		}
 	}
 
-	current.page = 1;
-	current.booksSource = result;
-
 	if (result.length < 1) {
 		book.list.message.classList.add("list__message_show");
 	} else {
 		book.list.message.classList.remove("list__message_show");
 	}
 
-	book.list.items.innerHTML = "";
-	loadFirstPage();
+	booksPreviewObj.currentBooksSource = result;
+	booksPreviewObj.loadFirstPage();
 
 	window.scrollTo({ top: 0, behavior: "smooth" });
 	handleToggleDialog("search");
-};
-
-// handleLoadNextPage
-
-/**
- * Loads additional books onto the next page, updates the {@link current.page}
- * number, and displays the count of remaining books that the user can load. If
- * no books are left to load, it will disable the {@link book.list.button}.
- *
- */
-const handleLoadNextPage = () => {
-	const newBookPreviewsFragment = createBookPreviewsHTML(
-		current.booksSource,
-		current.page
-	);
-
-	book.list.items.appendChild(newBookPreviewsFragment);
-	current.page += 1;
-	updateRemainingBooks();
 };
 
 // Event Handlers
@@ -202,7 +181,7 @@ book.list.close.addEventListener("click", () => {
 	handleToggleDialog("list");
 });
 
-book.list.button.addEventListener("click", handleLoadNextPage);
+book.list.button.addEventListener("click", booksPreviewObj.loadNextPage);
 book.list.items.addEventListener("click", handleOpenBookPreviewDialog);
 book.search.form.addEventListener("submit", handleBookFilterSearch);
 book.settings.form.addEventListener("submit", toggleThemeHandler);
